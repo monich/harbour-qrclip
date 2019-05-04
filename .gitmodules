@@ -1,0 +1,6 @@
+[submodule "libqrencode"]
+	path = libqrencode
+	url = https://github.com/fukuchi/libqrencode.git
+[submodule "harbour-lib"]
+	path = harbour-lib
+	url = https://github.com/monich/harbour-lib.git
