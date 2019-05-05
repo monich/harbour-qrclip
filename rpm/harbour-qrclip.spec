@@ -1,6 +1,6 @@
 Name:           harbour-qrclip
 Summary:        QR code generator
-Version:        1.0.1
+Version:        1.0.2
 Release:        1
 License:        BSD
 Group:          Applications/Internet
