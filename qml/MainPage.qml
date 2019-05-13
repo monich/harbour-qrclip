@@ -94,12 +94,21 @@ Page {
             visible: opacity > 0
             opacity: spaceForText/maxSpaceForText
 
-            Label {
+            SilicaFlickable {
                 anchors.fill: parent
-                horizontalAlignment: Text.AlignLeft
-                wrapMode: Text.Wrap
-                elide: Text.ElideRight
-                text: page.haveQrCode ? HarbourQrCodeGenerator.text : ""
+                contentHeight: textLabel.height
+                clip: true
+
+                Label {
+                    id: textLabel
+
+                    width: parent.width
+                    horizontalAlignment: Text.AlignLeft
+                    wrapMode: Text.Wrap
+                    text: page.haveQrCode ? HarbourQrCodeGenerator.text : ""
+                }
+
+                VerticalScrollDecorator { }
             }
         }
 
