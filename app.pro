@@ -50,10 +50,12 @@ INCLUDEPATH += \
     src \
     $${LIBQRENCODE_DIR}
 
-HEADERS +=
+HEADERS += \
+    src/FileUtils.h
 
 SOURCES += \
-    src/main.cpp
+    src/main.cpp \
+    src/FileUtils.cpp
 
 # harbour-lib
 

@@ -18,5 +18,10 @@
         <extracomment>Placeholder text</extracomment>
         <translation>Tekst w schowku jest za długi dla QR kodu.</translation>
     </message>
+    <message id="qrclip-menu-save_to_gallery">
+        <source>Save to Gallery</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation>Zapisz w Galerii</translation>
+    </message>
 </context>
 </TS>

@@ -18,5 +18,10 @@
         <extracomment>Placeholder text</extracomment>
         <translation>Texten i urklipp är för lång för QR-kod.</translation>
     </message>
+    <message id="qrclip-menu-save_to_gallery">
+        <source>Save to Gallery</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation>Spara i galleriet</translation>
+    </message>
 </context>
 </TS>

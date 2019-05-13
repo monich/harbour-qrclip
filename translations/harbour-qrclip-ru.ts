@@ -18,5 +18,10 @@
         <extracomment>Placeholder text</extracomment>
         <translation>В буфере обмена слишком много текста, в QR-код столько не помещается :(</translation>
     </message>
+    <message id="qrclip-menu-save_to_gallery">
+        <source>Save to Gallery</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation>Сохранить в Галерее</translation>
+    </message>
 </context>
 </TS>

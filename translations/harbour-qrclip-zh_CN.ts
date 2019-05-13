@@ -18,5 +18,10 @@
         <extracomment>Placeholder text</extracomment>
         <translation>剪切板文本太长，无法生成二维码。</translation>
     </message>
+    <message id="qrclip-menu-save_to_gallery">
+        <source>Save to Gallery</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation>保存至图库</translation>
+    </message>
 </context>
 </TS>

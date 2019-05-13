@@ -9,6 +9,10 @@ Page {
 
     property bool showText
     property real spaceForText: showText ? maxSpaceForText : 0
+    property string lastSavedQrCode
+    readonly property string qrCode: HarbourQrCodeGenerator.qrcode
+    readonly property bool haveQrCode: qrCode.length > 0
+    readonly property bool needPullDownMenu: haveQrCode && qrCode !== lastSavedQrCode
     readonly property real maxSpaceForText: Math.max(Screen.width, Screen.height) - Math.min(Screen.width, Screen.height)
 
     SilicaFlickable {
@@ -16,10 +20,37 @@ Page {
 
         anchors.fill: parent
 
+        PullDownMenu {
+            id: menu
+
+            visible: page.needPullDownMenu
+
+            property string savedQrCode
+
+            onActiveChanged: {
+                if (!active && savedQrCode) {
+                    // Don't save the same code twice
+                    page.lastSavedQrCode = savedQrCode
+                    savedQrCode = ""
+                }
+            }
+
+            MenuItem {
+                //: Pulley menu item
+                //% "Save to Gallery"
+                text: qsTrId("qrclip-menu-save_to_gallery")
+                onClicked: {
+                    if (FileUtils.saveToGallery(page.qrCode, "QRClip", "qrcode")) {
+                        menu.savedQrCode = page.qrCode
+                    }
+                }
+            }
+        }
+
         MouseArea {
             id: imageItem
 
-            visible: HarbourQrCodeGenerator.qrcode !== ""
+            visible: page.haveQrCode
             anchors {
                 left: parent.left
                 right: parent.right
@@ -43,7 +74,7 @@ Page {
 
                     asynchronous: true
                     anchors.centerIn: parent
-                    source: HarbourQrCodeGenerator.qrcode ? "image://qrcode/" + HarbourQrCodeGenerator.qrcode : ""
+                    source: page.haveQrCode ? "image://qrcode/" + page.qrCode : ""
                     width: sourceSize.width * n
                     height: sourceSize.height * n
                     smooth: false
@@ -68,7 +99,7 @@ Page {
                 horizontalAlignment: Text.AlignLeft
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
-                text: HarbourQrCodeGenerator.qrcode ? HarbourQrCodeGenerator.text : ""
+                text: page.haveQrCode ? HarbourQrCodeGenerator.text : ""
             }
         }
 

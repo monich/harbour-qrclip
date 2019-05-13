@@ -31,6 +31,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "FileUtils.h"
+
 #include "HarbourImageProvider.h"
 #include "HarbourQrCodeGenerator.h"
 #include "HarbourQrCodeImageProvider.h"
@@ -52,6 +54,7 @@
 
 static void register_types(const char* uri, int v1 = 1, int v2 = 0)
 {
+    qmlRegisterSingletonType<FileUtils>(uri, v1, v2, "FileUtils", FileUtils::createSingleton);
     qmlRegisterSingletonType<HarbourQrCodeGenerator>(uri, v1, v2, "HarbourQrCodeGenerator", HarbourQrCodeGenerator::createSingleton);
 }
 

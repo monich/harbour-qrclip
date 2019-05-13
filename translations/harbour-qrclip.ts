@@ -18,5 +18,10 @@
         <extracomment>Placeholder text</extracomment>
         <translation>Text in clipboard is too long for QR code.</translation>
     </message>
+    <message id="qrclip-menu-save_to_gallery">
+        <source>Save to Gallery</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

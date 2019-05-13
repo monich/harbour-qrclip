@@ -18,5 +18,10 @@
         <extracomment>Placeholder text</extracomment>
         <translation>Le texte du presse-papier est trop long pour un QR code.</translation>
     </message>
+    <message id="qrclip-menu-save_to_gallery">
+        <source>Save to Gallery</source>
+        <extracomment>Pulley menu item</extracomment>
+        <translation>Enregistrer dans la galerie</translation>
+    </message>
 </context>
 </TS>
