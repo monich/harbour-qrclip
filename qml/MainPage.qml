@@ -10,7 +10,7 @@ Page {
     property bool showText
     property real spaceForText: showText ? maxSpaceForText : 0
     property string lastSavedQrCode
-    readonly property string qrCode: HarbourQrCodeGenerator.qrcode
+    readonly property string qrCode: HarbourQrCodeGenerator.code
     readonly property bool haveQrCode: qrCode.length > 0
     readonly property bool needPullDownMenu: haveQrCode && qrCode !== lastSavedQrCode
     readonly property real maxSpaceForText: Math.max(Screen.width, Screen.height) - Math.min(Screen.width, Screen.height)
@@ -115,7 +115,7 @@ Page {
         ViewPlaceholder {
             // No need to animate opacity
             Behavior on opacity { enabled: false }
-            enabled: !startTimer.running && !HarbourQrCodeGenerator.qrcode && !HarbourQrCodeGenerator.running
+            enabled: !startTimer.running && !HarbourQrCodeGenerator.code && !HarbourQrCodeGenerator.running
             text: HarbourQrCodeGenerator.running ? "" : HarbourQrCodeGenerator.text ?
                 //: Placeholder text
                 //% "Text in clipboard is too long for QR code."
