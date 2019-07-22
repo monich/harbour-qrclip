@@ -40,7 +40,7 @@ Page {
                 //% "Save to Gallery"
                 text: qsTrId("qrclip-menu-save_to_gallery")
                 onClicked: {
-                    if (FileUtils.saveToGallery(page.qrCode, "QRClip", "qrcode")) {
+                    if (FileUtils.saveToGallery(page.qrCode, "QRClip", "qrcode", Math.min(qrcodeImage.n, 5))) {
                         menu.savedQrCode = page.qrCode
                     }
                 }

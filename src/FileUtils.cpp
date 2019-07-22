@@ -55,7 +55,7 @@ QObject* FileUtils::createSingleton(QQmlEngine* aEngine, QJSEngine*)
     return new FileUtils(aEngine);
 }
 
-QString FileUtils::saveToGallery(QString aBase32, QString aSubDir, QString aBaseName)
+QString FileUtils::saveToGallery(QString aBase32, QString aSubDir, QString aBaseName, int aScale)
 {
     const QByteArray bits(HarbourBase32::fromBase32(aBase32.toLocal8Bit()));
     HDEBUG(aBase32 << "=>" << bits.size() << "bytes");
@@ -70,6 +70,11 @@ QString FileUtils::saveToGallery(QString aBase32, QString aSubDir, QString aBase
         painter.drawImage(1, 1, qrcode);
         painter.end();
 
+        if (aScale > 1) {
+            HDEBUG(w << "x" << h << "=>" <<  (w * aScale) << "x" << (h * aScale));
+            img = img.scaledToHeight(h * aScale);
+        }
+
         // Write the file
         QString destDir = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
         if (!destDir.isEmpty()) {
@@ -79,7 +84,7 @@ QString FileUtils::saveToGallery(QString aBase32, QString aSubDir, QString aBase
             if (aBaseName.isEmpty()) aBaseName = QLatin1String("image");
             if (QFile::exists(destDir) || QDir(destDir).mkpath(destDir)) {
                 static const QString suffix(".png");
-                static const QString prefix(destDir + QDir::separator() + aBaseName);
+                const QString prefix(destDir + QDir::separator() + aBaseName);
                 QString destFile = prefix + suffix;
                 for (int i = 1; QFile::exists(destFile); i++) {
                     destFile = prefix + QString().sprintf("-%03d", i) + suffix;

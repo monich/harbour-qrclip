@@ -46,7 +46,7 @@ class FileUtils : public QObject {
 public:
     FileUtils(QObject* aParent);
 
-    Q_INVOKABLE QString saveToGallery(QString aBase32, QString aSubDir, QString aBaseName);
+    Q_INVOKABLE QString saveToGallery(QString aBase32, QString aSubDir, QString aBaseName, int aScale);
 
     // Callback for qmlRegisterSingletonType<FileUtils>
     static QObject* createSingleton(QQmlEngine* aEngine, QJSEngine* aScript);
