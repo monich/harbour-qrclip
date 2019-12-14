@@ -54,8 +54,8 @@ CoverBackground {
             opacity: (HarbourQrCodeGenerator.qrcode || HarbourQrCodeGenerator.running) ? 0 : 1
             Behavior on opacity { FadeAnimation { } }
 
-            readonly property url happy: "image://harbour/" + Qt.resolvedUrl("images/happy.svg") + "?" + Theme.primaryColor
-            readonly property url unhappy: "image://harbour/" + Qt.resolvedUrl("images/unhappy.svg") + "?" + Theme.primaryColor
+            readonly property url happy: "image://harbour/" + Qt.resolvedUrl("images/happy.svg") + "?" + Theme.secondaryHighlightColor
+            readonly property url unhappy: "image://harbour/" + Qt.resolvedUrl("images/unhappy.svg") + "?" + Theme.secondaryHighlightColor
         }
     }
 
@@ -80,10 +80,10 @@ CoverBackground {
     CoverActionList {
         id: actionList
 
-        enabled: Clipboard.hasText
+        enabled: HarbourClipboard.text.length > 0
         CoverAction {
             iconSource: "image://theme/icon-cover-cancel"
-            onTriggered: Clipboard.text = ""
+            onTriggered: HarbourClipboard.text = ""
         }
     }
 }

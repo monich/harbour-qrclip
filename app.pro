@@ -64,6 +64,7 @@ INCLUDEPATH += \
 
 HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourBase32.h \
+    $${HARBOUR_LIB_INCLUDE}/HarbourClipboard.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourImageProvider.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourQrCodeGenerator.h \
@@ -73,6 +74,7 @@ HEADERS += \
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourBase32.cpp \
+    $${HARBOUR_LIB_SRC}/HarbourClipboard.cpp \
     $${HARBOUR_LIB_SRC}/HarbourImageProvider.cpp \
     $${HARBOUR_LIB_SRC}/HarbourQrCodeGenerator.cpp \
     $${HARBOUR_LIB_SRC}/HarbourQrCodeImageProvider.cpp \

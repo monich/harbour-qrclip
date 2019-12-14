@@ -11,10 +11,9 @@ ApplicationWindow {
     initialPage: Component { MainPage { } }
     cover: Component {  CoverPage { } }
 
-    Component.onCompleted: HarbourQrCodeGenerator.text = Clipboard.text
-
-    Connections {
-        target: Clipboard
-        onTextChanged: HarbourQrCodeGenerator.text = Clipboard.text
+    Binding {
+        target: HarbourQrCodeGenerator
+        property: "text"
+        value: HarbourClipboard.text
     }
 }
