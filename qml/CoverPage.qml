@@ -2,13 +2,15 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.qrclip 1.0
 
+import "harbour"
+
 CoverBackground {
     id: cover
 
     readonly property int availableHeight: height - coverActionHeight
     readonly property int coverActionHeight: Theme.itemSizeSmall/parent.scale
 
-    Image {
+    HarbourHighlightIcon {
         id: background
 
         y: 2 * Math.round((availableHeight - height)/4)
@@ -16,7 +18,7 @@ CoverBackground {
         height: 2 * Math.round((limitWidth ? (maxWidth * ratioY / ratioX) : maxHeight)/2)
         sourceSize: Qt.size(width, height)
         anchors.horizontalCenter: parent.horizontalCenter
-        source: "image://harbour/" + Qt.resolvedUrl("images/cover-background.svg") + "?" + Theme.highlightColor
+        source: "images/cover-background.svg"
 
         // The native aspect ratio of the background image is 4:5
         readonly property real ratioX: 4
@@ -45,17 +47,16 @@ CoverBackground {
             Behavior on opacity { FadeAnimation { } }
         }
 
-        Image {
+        HarbourHighlightIcon {
             sourceSize: Qt.size(width, height)
             anchors.fill: parent
             asynchronous: true
             visible: opacity > 0
-            source: (!HarbourQrCodeGenerator.text || HarbourQrCodeGenerator.qrcode || HarbourQrCodeGenerator.running) ? happy : unhappy
+            highlightColor: Theme.secondaryHighlightColor
+            source: (!HarbourQrCodeGenerator.text || HarbourQrCodeGenerator.qrcode || HarbourQrCodeGenerator.running) ?
+                "images/happy.svg" : "images/unhappy.svg"
             opacity: (HarbourQrCodeGenerator.qrcode || HarbourQrCodeGenerator.running) ? 0 : 1
             Behavior on opacity { FadeAnimation { } }
-
-            readonly property url happy: "image://harbour/" + Qt.resolvedUrl("images/happy.svg") + "?" + Theme.secondaryHighlightColor
-            readonly property url unhappy: "image://harbour/" + Qt.resolvedUrl("images/unhappy.svg") + "?" + Theme.secondaryHighlightColor
         }
     }
 

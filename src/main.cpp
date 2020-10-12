@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2019 Jolla Ltd.
- * Copyright (C) 2019 Slava Monich <slava@monich.com>
+ * Copyright (C) 2019-2020 Jolla Ltd.
+ * Copyright (C) 2019-2020 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of BSD license as follows:
  *
@@ -34,7 +34,6 @@
 #include "FileUtils.h"
 
 #include "HarbourClipboard.h"
-#include "HarbourImageProvider.h"
 #include "HarbourQrCodeGenerator.h"
 #include "HarbourQrCodeImageProvider.h"
 #include "HarbourDebug.h"
@@ -90,7 +89,6 @@ int main(int argc, char *argv[])
     QQmlContext* context = view->rootContext();
     QQmlEngine* engine = context->engine();
 
-    engine->addImageProvider("harbour", new HarbourImageProvider);
     engine->addImageProvider("qrcode", new HarbourQrCodeImageProvider);
 
     // Initialize the view and show it

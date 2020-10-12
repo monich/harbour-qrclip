@@ -66,22 +66,25 @@ HEADERS += \
     $${HARBOUR_LIB_INCLUDE}/HarbourBase32.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourClipboard.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourDebug.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourImageProvider.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourQrCodeGenerator.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourQrCodeImageProvider.h \
     $${HARBOUR_LIB_INCLUDE}/HarbourSystem.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourTask.h \
-    $${HARBOUR_LIB_INCLUDE}/HarbourTheme.h
+    $${HARBOUR_LIB_INCLUDE}/HarbourTask.h
 
 SOURCES += \
     $${HARBOUR_LIB_SRC}/HarbourBase32.cpp \
     $${HARBOUR_LIB_SRC}/HarbourClipboard.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourImageProvider.cpp \
     $${HARBOUR_LIB_SRC}/HarbourQrCodeGenerator.cpp \
     $${HARBOUR_LIB_SRC}/HarbourQrCodeImageProvider.cpp \
     $${HARBOUR_LIB_SRC}/HarbourSystem.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourTask.cpp \
-    $${HARBOUR_LIB_SRC}/HarbourTheme.cpp
+    $${HARBOUR_LIB_SRC}/HarbourTask.cpp
+
+HARBOUR_QML_COMPONENTS = \
+    $${HARBOUR_LIB_QML}/HarbourHighlightIcon.qml
+
+qml_components.files = $${HARBOUR_QML_COMPONENTS}
+qml_components.path = /usr/share/$${TARGET}/qml/harbour
+INSTALLS += qml_components
 
 # Icons
 ICON_SIZES = 86 108 128 256
