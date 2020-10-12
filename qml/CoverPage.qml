@@ -31,8 +31,7 @@ CoverBackground {
     }
 
     Item {
-        // The size of the opening in the middle is 3/4 of the background image width:
-        height: Math.floor(3 * background.width / 4 - 2 * Theme.paddingSmall)
+        height: background.width - 2 * Theme.paddingLarge
         width: height
         anchors {
             centerIn: background
