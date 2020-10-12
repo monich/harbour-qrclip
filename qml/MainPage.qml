@@ -12,7 +12,7 @@ Page {
     property string lastSavedQrCode
     readonly property string qrCode: HarbourQrCodeGenerator.code
     readonly property bool haveQrCode: qrCode.length > 0
-    readonly property bool needPullDownMenu: haveQrCode && qrCode !== lastSavedQrCode
+    readonly property bool needPullDownMenu: haveQrCode && qrCode !== lastSavedQrCode && showText
     readonly property real maxSpaceForText: Math.max(Screen.width, Screen.height) - Math.min(Screen.width, Screen.height)
 
     SilicaFlickable {
