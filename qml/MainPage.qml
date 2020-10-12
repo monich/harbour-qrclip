@@ -97,6 +97,7 @@ Page {
             SilicaFlickable {
                 anchors.fill: parent
                 contentHeight: textLabel.height
+                quickScroll: false
                 clip: true
 
                 Label {
