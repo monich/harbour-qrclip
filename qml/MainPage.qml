@@ -2,6 +2,8 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.qrclip 1.0
 
+import "harbour"
+
 Page {
     id: page
 
@@ -114,17 +116,28 @@ Page {
             }
         }
 
-        ViewPlaceholder {
-            // No need to animate opacity
-            Behavior on opacity { enabled: false }
-            enabled: !startTimer.running && !HarbourQrCodeGenerator.code && !HarbourQrCodeGenerator.running
-            text: HarbourQrCodeGenerator.running ? "" : HarbourQrCodeGenerator.text ?
-                //: Placeholder text
-                //% "Text in clipboard is too long for QR code."
-                qsTrId("qrclip-placeholder-text_too_long") :
-                //: Placeholder text
-                //% "No text in clipboard."
-                qsTrId("qrclip-placeholder-no_text")
+        Loader {
+            active: !startTimer.running && !HarbourQrCodeGenerator.code && !HarbourQrCodeGenerator.running
+            anchors.fill: parent
+            sourceComponent: Item {
+                InfoLabel {
+                    y: Math.round(parent.height/3 - height/2)
+                    text: HarbourQrCodeGenerator.running ? "" : HarbourQrCodeGenerator.text ?
+                        //: Placeholder text
+                        //% "Text in clipboard is too long for QR code."
+                        qsTrId("qrclip-placeholder-text_too_long") :
+                        //: Placeholder text
+                        //% "No text in clipboard."
+                        qsTrId("qrclip-placeholder-no_text")
+                }
+                HarbourHighlightIcon {
+                    y: Math.round(2*parent.height/3 - height/2)
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    sourceSize.height: Theme.iconSizeLarge
+                    source: HarbourQrCodeGenerator.running ? "" : HarbourQrCodeGenerator.text ? "images/too-long.svg" : "images/shrug.svg"
+                    highlightColor: Theme.secondaryHighlightColor
+                }
+            }
         }
     }
 
