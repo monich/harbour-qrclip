@@ -19,6 +19,8 @@ CoverBackground {
         sourceSize: Qt.size(width, height)
         anchors.horizontalCenter: parent.horizontalCenter
         source: "images/cover-background.svg"
+        highlightColor: Theme.primaryColor
+        opacity: 0.2
 
         // The native aspect ratio of the background image is 4:5
         readonly property real ratioX: 4

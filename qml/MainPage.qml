@@ -107,6 +107,7 @@ Page {
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Text.Wrap
                     text: page.haveQrCode ? HarbourQrCodeGenerator.text : ""
+                    color: Theme.highlightColor
                 }
 
                 VerticalScrollDecorator { }
