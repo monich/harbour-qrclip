@@ -4,7 +4,7 @@
     <path d="M85.7,84.277C85.7,85.063 85.063,85.7 84.277,85.7L1.723,85.7C0.937,85.7 0.3,85.063 0.3,84.277L0.3,1.723C0.3,0.937 0.937,0.3 1.723,0.3L84.276,0.3C85.062,0.3 85.699,0.937 85.699,1.723L85.699,84.277L85.7,84.277Z" style="fill:url(#_Linear1);fill-rule:nonzero;"/>
     <g id="Complete-icon" serif:id="Complete icon" transform="matrix(1.66576,0,0,1.66576,-9.3044,-10.3044)">
         <g id="Board">
-            <path d="M48,12L16,12C13.8,12 12,13.8 12,16L12,48C12,50.2 13.8,52 16,52L48,52C50.2,52 52,50.2 52,48L52,16C52,13.8 50.2,12 48,12Z" style="fill:rgb(231,173,49);fill-rule:nonzero;"/>
+            <path d="M48,12L16,12C13.8,12 12,13.8 12,16L12,48C12,50.2 13.8,52 16,52L48,52C50.2,52 52,50.2 52,48L52,16C52,13.8 50.2,12 48,12Z" style="fill:rgb(231,202,98);fill-rule:nonzero;"/>
         </g>
         <g id="Paper">
             <rect x="16" y="18" width="32" height="32" style="fill:rgb(35,31,32);fill-opacity:0.21;"/>
@@ -91,6 +91,6 @@
         </g>
     </g>
     <defs>
-        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.368027,-77.057,77.057,0.368027,43.1798,80.6549)"><stop offset="0" style="stop-color:rgb(0,73,150);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(109,180,255);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.368027,-77.057,77.057,0.368027,43.1798,80.6549)"><stop offset="0" style="stop-color:rgb(31,154,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(0,202,224);stop-opacity:1"/></linearGradient>
     </defs>
 </svg>
