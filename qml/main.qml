@@ -5,14 +5,12 @@ import harbour.qrclip 1.0
 ApplicationWindow {
     id: appWindow
 
-    readonly property int appAllowedOrientations: Orientation.All
-
-    allowedOrientations: appAllowedOrientations
-    initialPage: Component { MainPage { } }
+    allowedOrientations: Orientation.All
+    initialPage: Component { MainPage { allowedOrientations: appWindow.allowedOrientations } }
     cover: Component {  CoverPage { } }
 
     Binding {
-        target: HarbourQrCodeGenerator
+        target: QrCodeModel
         property: "text"
         value: HarbourClipboard.text
     }

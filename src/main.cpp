@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2019-2020 Jolla Ltd.
- * Copyright (C) 2019-2020 Slava Monich <slava@monich.com>
+ * Copyright (C) 2019-2021 Jolla Ltd.
+ * Copyright (C) 2019-2021 Slava Monich <slava@monich.com>
  *
  * You may use this file under the terms of BSD license as follows:
  *
@@ -32,6 +32,7 @@
  */
 
 #include "FileUtils.h"
+#include "QrCodeModel.h"
 
 #include "HarbourClipboard.h"
 #include "HarbourQrCodeGenerator.h"
@@ -55,8 +56,9 @@
 static void register_types(const char* uri, int v1 = 1, int v2 = 0)
 {
     qmlRegisterSingletonType<FileUtils>(uri, v1, v2, "FileUtils", FileUtils::createSingleton);
+    qmlRegisterSingletonType<QrCodeModel>(uri, v1, v2, "QrCodeModel", QrCodeModel::createSingleton);
     qmlRegisterSingletonType<HarbourClipboard>(uri, v1, v2, "HarbourClipboard", HarbourClipboard::createSingleton);
-    qmlRegisterSingletonType<HarbourQrCodeGenerator>(uri, v1, v2, "HarbourQrCodeGenerator", HarbourQrCodeGenerator::createSingleton);
+    qmlRegisterType<HarbourQrCodeGenerator>(uri, v1, v2, "HarbourQrCodeGenerator");
 }
 
 int main(int argc, char *argv[])

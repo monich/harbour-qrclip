@@ -23,5 +23,10 @@
         <extracomment>Pulley menu item</extracomment>
         <translation>Spara i galleriet</translation>
     </message>
+    <message id="qrclip-menu-level">
+        <source>Level %1</source>
+        <extracomment>Pulley menu label</extracomment>
+        <translation type="unfinished">Nivå %1</translation>
+    </message>
 </context>
 </TS>

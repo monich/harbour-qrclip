@@ -42,9 +42,9 @@ CoverBackground {
             anchors.fill: parent
             smooth: false
             asynchronous: true
-            source: HarbourQrCodeGenerator.qrcode ? "image://qrcode/" + HarbourQrCodeGenerator.qrcode + "?color=" + Theme.primaryColor : ""
+            source: QrCodeModel.qrcode ? "image://qrcode/" + QrCodeModel.qrcode + "?color=" + Theme.primaryColor : ""
             visible: opacity > 0
-            opacity: HarbourQrCodeGenerator.qrcode ? 1 : 0
+            opacity: QrCodeModel.qrcode ? 1 : 0
             Behavior on opacity { FadeAnimation { } }
         }
 
@@ -54,9 +54,9 @@ CoverBackground {
             asynchronous: true
             visible: opacity > 0
             highlightColor: Theme.secondaryHighlightColor
-            source: (!HarbourQrCodeGenerator.text || HarbourQrCodeGenerator.qrcode || HarbourQrCodeGenerator.running) ?
+            source: (!QrCodeModel.text || QrCodeModel.qrcode || QrCodeModel.running) ?
                 "images/happy.svg" : "images/unhappy.svg"
-            opacity: (HarbourQrCodeGenerator.qrcode || HarbourQrCodeGenerator.running) ? 0 : 1
+            opacity: (QrCodeModel.qrcode || QrCodeModel.running) ? 0 : 1
             Behavior on opacity { FadeAnimation { } }
         }
     }

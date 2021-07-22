@@ -23,5 +23,10 @@
         <extracomment>Pulley menu item</extracomment>
         <translation>Guardar na galeria</translation>
     </message>
+    <message id="qrclip-menu-level">
+        <source>Level %1</source>
+        <extracomment>Pulley menu label</extracomment>
+        <translation type="unfinished">Nível %1</translation>
+    </message>
 </context>
 </TS>

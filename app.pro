@@ -51,11 +51,13 @@ INCLUDEPATH += \
     $${LIBQRENCODE_DIR}
 
 HEADERS += \
-    src/FileUtils.h
+    src/FileUtils.h \
+    src/QrCodeModel.h
 
 SOURCES += \
     src/main.cpp \
-    src/FileUtils.cpp
+    src/FileUtils.cpp \
+    src/QrCodeModel.cpp
 
 # harbour-lib
 

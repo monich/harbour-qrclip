@@ -23,5 +23,10 @@
         <extracomment>Pulley menu item</extracomment>
         <translation>保存至图库</translation>
     </message>
+    <message id="qrclip-menu-level">
+        <source>Level %1</source>
+        <extracomment>Pulley menu label</extracomment>
+        <translation type="unfinished">%1 级</translation>
+    </message>
 </context>
 </TS>

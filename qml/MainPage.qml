@@ -7,32 +7,28 @@ import "harbour"
 Page {
     id: page
 
-    allowedOrientations: appAllowedOrientations
-
     property bool showText
-    property real spaceForText: showText ? maxSpaceForText : 0
-    property string lastSavedQrCode
-    readonly property string qrCode: HarbourQrCodeGenerator.code
-    readonly property bool haveQrCode: qrCode.length > 0
-    readonly property bool needPullDownMenu: haveQrCode && qrCode !== lastSavedQrCode && showText
-    readonly property real maxSpaceForText: Math.max(Screen.width, Screen.height) - Math.min(Screen.width, Screen.height)
+    property real spaceForText: showText ? maxSpaceForText : minSpaceForText
+    readonly property int maxSpaceForText: Math.max(Screen.width, Screen.height) - Math.min(Screen.width, Screen.height)
+    readonly property int minSpaceForText: Math.round(maxSpaceForText/2)
+    readonly property int maxDisplaySize: Math.min(Screen.width, Screen.height) - 4 * Theme.horizontalPageMargin
+    readonly property bool haveQrCode: qrCodes.count > 0
+    property alias currentItem: qrCodes.currentItem
 
     SilicaFlickable {
-        id: flickable
-
         anchors.fill: parent
 
         PullDownMenu {
             id: menu
 
-            visible: page.needPullDownMenu
+            visible: haveQrCode && showText
 
             property string savedQrCode
 
             onActiveChanged: {
-                if (!active && savedQrCode) {
+                if (!active && savedQrCode && currentItem) {
                     // Don't save the same code twice
-                    page.lastSavedQrCode = savedQrCode
+                    currentItem.lastSavedQrCode = savedQrCode
                     savedQrCode = ""
                 }
             }
@@ -41,62 +37,98 @@ Page {
                 //: Pulley menu item
                 //% "Save to Gallery"
                 text: qsTrId("qrclip-menu-save_to_gallery")
+                visible: currentItem && currentItem.needToSaveImage
                 onClicked: {
-                    if (FileUtils.saveToGallery(page.qrCode, "QRClip", "qrcode", Math.min(qrcodeImage.n, 5))) {
-                        menu.savedQrCode = page.qrCode
+                    if (currentItem && FileUtils.saveToGallery(currentItem.qrCode, "QRClip", "qrcode", Math.min(currentItem.qrCodeScale, 5))) {
+                        menu.savedQrCode = currentItem.qrCode
                     }
                 }
             }
+            MenuLabel {
+                //: Pulley menu label
+                //% "Level %1"
+                text: currentItem ? qsTrId("qrclip-menu-level").arg(currentItem.ecLevel) : ""
+            }
         }
 
-        MouseArea {
-            id: imageItem
+        SilicaListView {
+            id: qrCodes
 
-            visible: page.haveQrCode
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-                bottom: parent.bottom
-            }
+            anchors.fill: parent
+            orientation: ListView.Horizontal
+            snapMode: ListView.SnapOneItem
+            highlightRangeMode: ListView.StrictlyEnforceRange
+            model: QrCodeModel
 
-            Rectangle {
-                id: qrcodeRect
+            delegate: MouseArea {
 
-                color: "white"
-                radius: Theme.paddingMedium
-                anchors.centerIn: parent
-                width: qrcodeImage.width + 2 * Theme.horizontalPageMargin
-                height: qrcodeImage.height + 2 * Theme.horizontalPageMargin
+                width: page.width
+                height: page.height
 
-                readonly property int margins: Math.round((Math.min(Screen.width, Screen.height) - Math.max(width, height))/2)
-
-                Image {
-                    id: qrcodeImage
-
-                    asynchronous: true
-                    anchors.centerIn: parent
-                    source: page.haveQrCode ? "image://qrcode/" + page.qrCode : ""
-                    width: sourceSize.width * n
-                    height: sourceSize.height * n
-                    smooth: false
-
-                    readonly property int maxDisplaySize: Math.min(Screen.width, Screen.height) - 4 * Theme.horizontalPageMargin
-                    readonly property int maxSourceSize: Math.max(sourceSize.width, sourceSize.height)
-                    readonly property int n: maxSourceSize ? Math.floor(maxDisplaySize/maxSourceSize) : 0
+                property string lastSavedQrCode
+                readonly property string qrCode: model.qrcode
+                readonly property bool needToSaveImage: qrCode !== lastSavedQrCode
+                readonly property int qrCodeScale: qrcodeImage.n
+                readonly property var ecLevel: {
+                    switch (model.eclevel) {
+                    case HarbourQrCodeGenerator.ECLevel_L: return "L"
+                    case HarbourQrCodeGenerator.ECLevel_M: return "M"
+                    case HarbourQrCodeGenerator.ECLevel_Q: return "Q"
+                    case HarbourQrCodeGenerator.ECLevel_H: return "H"
+                    }
+                    return model.eclevel
                 }
-            }
 
-            onClicked: showText = !showText
+                Item {
+                    x: isPortrait ? 0 : itemOffset
+                    y: isLandscape ? 0 : itemOffset
+                    width: itemSize
+                    height: itemSize
+
+                    readonly property int itemSize: Math.min(Screen.width, Screen.height)
+                    readonly property int itemOffset: Math.round((Math.max(Screen.width, Screen.height) - itemSize)/2 - (spaceForText - minSpaceForText))
+
+                    Rectangle {
+                        id: qrcodeRect
+
+                        color: "white"
+                        radius: Theme.paddingMedium
+                        anchors.centerIn: parent
+                        width: qrcodeImage.width + 2 * Theme.horizontalPageMargin
+                        height: qrcodeImage.height + 2 * Theme.horizontalPageMargin
+
+                        readonly property int margins: Math.round((Math.min(Screen.width, Screen.height) - Math.max(width, height))/2)
+
+                        Image {
+                            id: qrcodeImage
+
+                            asynchronous: true
+                            anchors.centerIn: parent
+                            source: "image://qrcode/" + model.qrcode
+                            width: sourceSize.width * n
+                            height: sourceSize.height * n
+                            smooth: false
+
+                            readonly property int maxSourceSize: Math.max(sourceSize.width, sourceSize.height)
+                            readonly property int n: maxSourceSize ? Math.floor(maxDisplaySize/maxSourceSize) : 0
+                        }
+                    }
+                }
+
+                onClicked: showText = !showText
+            }
         }
 
         Item {
             id: textItem
 
+            z: (qrCodes.moving || textFlickable.contentHeight <= textFlickable.height) ? qrCodes.z - 1 : qrCodes.z
             visible: opacity > 0
-            opacity: spaceForText/maxSpaceForText
+            opacity: (spaceForText - minSpaceForText)/(maxSpaceForText - minSpaceForText)
 
             SilicaFlickable {
+                id: textFlickable
+
                 anchors.fill: parent
                 contentHeight: textLabel.height
                 quickScroll: false
@@ -108,7 +140,7 @@ Page {
                     width: parent.width
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Text.Wrap
-                    text: page.haveQrCode ? HarbourQrCodeGenerator.text : ""
+                    text: haveQrCode ? QrCodeModel.text : ""
                     color: Theme.highlightColor
                 }
 
@@ -117,12 +149,12 @@ Page {
         }
 
         Loader {
-            active: !startTimer.running && !HarbourQrCodeGenerator.code && !HarbourQrCodeGenerator.running
+            active: !startTimer.running && !qrCodes.count && !QrCodeModel.running
             anchors.fill: parent
             sourceComponent: Item {
                 InfoLabel {
                     y: Math.round(parent.height/3 - height/2)
-                    text: HarbourQrCodeGenerator.running ? "" : HarbourQrCodeGenerator.text ?
+                    text: QrCodeModel.running ? "" : QrCodeModel.text ?
                         //: Placeholder text
                         //% "Text in clipboard is too long for QR code."
                         qsTrId("qrclip-placeholder-text_too_long") :
@@ -134,14 +166,14 @@ Page {
                     y: Math.round(2*parent.height/3 - height/2)
                     anchors.horizontalCenter: parent.horizontalCenter
                     sourceSize.height: Theme.iconSizeLarge
-                    source: HarbourQrCodeGenerator.running ? "" : HarbourQrCodeGenerator.text ? "images/too-long.svg" : "images/shrug.svg"
+                    source: QrCodeModel.running ? "" : QrCodeModel.text ? "images/too-long.svg" : "images/shrug.svg"
                     highlightColor: Theme.secondaryHighlightColor
                 }
             }
         }
     }
 
-    Behavior on spaceForText { SmoothedAnimation { duration: 150 } }
+    Behavior on spaceForText { SmoothedAnimation { duration: 200 } }
 
     Timer {
         id: startTimer
@@ -156,18 +188,11 @@ Page {
             when: isPortrait
             changes: [
                 PropertyChanges {
-                    target: imageItem
-                    anchors {
-                        rightMargin: 0
-                        bottomMargin: spaceForText
-                    }
-                },
-                PropertyChanges {
                     target: textItem
-                    x: qrcodeRect.margins
-                    y: qrcodeRect.y + qrcodeRect.height + qrcodeRect.margins
-                    width: page.width - 2 * qrcodeRect.margins
-                    height: page.height - page.width - qrcodeRect.margins
+                    x: 2 * Theme.horizontalPageMargin
+                    y: page.height - spaceForText
+                    width: page.width - 2 * x
+                    height: maxSpaceForText
                 }
             ]
         },
@@ -176,18 +201,11 @@ Page {
             when: !isPortrait
             changes: [
                 PropertyChanges {
-                    target: imageItem
-                    anchors {
-                        rightMargin: spaceForText
-                        bottomMargin: 0
-                    }
-                },
-                PropertyChanges {
                     target: textItem
-                    x: qrcodeRect.x + qrcodeRect.width + qrcodeRect.margins
-                    y: qrcodeRect.margins
-                    width: page.width - page.height - Theme.horizontalPageMargin
-                    height: page.height - 2 * qrcodeRect.margins
+                    x: page.width - spaceForText
+                    y: 2 * Theme.horizontalPageMargin // Yes, horizontal
+                    width: maxSpaceForText
+                    height: page.height - 2 * y
                 }
             ]
         }
