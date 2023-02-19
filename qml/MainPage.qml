@@ -137,7 +137,8 @@ Page {
                 Label {
                     id: textLabel
 
-                    width: parent.width
+                    x: isPortrait ? 2 * Theme.horizontalPageMargin : 0
+                    width: parent.width - (isPortrait ? 4 : 1) * Theme.horizontalPageMargin
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Text.Wrap
                     text: haveQrCode ? QrCodeModel.text : ""
@@ -189,9 +190,9 @@ Page {
             changes: [
                 PropertyChanges {
                     target: textItem
-                    x: 2 * Theme.horizontalPageMargin
+                    x: 0
                     y: page.height - spaceForText
-                    width: page.width - 2 * x
+                    width: page.width
                     height: maxSpaceForText
                 }
             ]
