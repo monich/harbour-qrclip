@@ -6,4 +6,4 @@ Icon=harbour-qrclip
 Exec=harbour-qrclip
 
 [X-Sailjail]
-Permissions=
+Permissions=UserDirs
