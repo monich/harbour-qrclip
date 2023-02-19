@@ -23,6 +23,19 @@ BuildRequires:  qt5-qttools-linguist
 %description
 Generates QR codes from clipboard contents.
 
+%if "%{?vendor}" == "chum"
+Categories:
+ - Utility
+Icon: https://raw.githubusercontent.com/monich/harbour-qrclip/master/icons/harbour-qrclip.svg
+Screenshots:
+- https://home.monich.net/chum/harbour-qrclip/screenshots/screenshot-001.png
+- https://home.monich.net/chum/harbour-qrclip/screenshots/screenshot-002.png
+- https://home.monich.net/chum/harbour-qrclip/screenshots/screenshot-003.png
+- https://home.monich.net/chum/harbour-qrclip/screenshots/screenshot-004.png
+Url:
+  Homepage: https://openrepos.net/content/slava/qr-clip
+%endif
+
 %prep
 %setup -q -n %{name}-%{version}
 
