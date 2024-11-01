@@ -9,9 +9,9 @@ Page {
 
     property bool showText
     property real spaceForText: showText ? maxSpaceForText : minSpaceForText
-    readonly property int maxSpaceForText: Math.max(Screen.width, Screen.height) - Math.min(Screen.width, Screen.height)
+    readonly property int maxSpaceForText: Math.max(page.width, page.height) - Math.min(page.width, page.height)
     readonly property int minSpaceForText: Math.round(maxSpaceForText/2)
-    readonly property int maxDisplaySize: Math.min(Screen.width, Screen.height) - 4 * Theme.horizontalPageMargin
+    readonly property int maxDisplaySize: Math.min(page.width, page.height) - 4 * Theme.horizontalPageMargin
     readonly property bool haveQrCode: qrCodes.count > 0
     property alias currentItem: qrCodes.currentItem
 
@@ -85,8 +85,8 @@ Page {
                     width: itemSize
                     height: itemSize
 
-                    readonly property int itemSize: Math.min(Screen.width, Screen.height)
-                    readonly property int itemOffset: Math.round((Math.max(Screen.width, Screen.height) - itemSize)/2 - (spaceForText - minSpaceForText))
+                    readonly property int itemSize: Math.min(page.width, page.height)
+                    readonly property int itemOffset: Math.round((Math.max(page.width, page.height) - itemSize)/2 - (spaceForText - minSpaceForText))
 
                     Rectangle {
                         id: qrcodeRect
@@ -97,7 +97,7 @@ Page {
                         width: qrcodeImage.width + 2 * Theme.horizontalPageMargin
                         height: qrcodeImage.height + 2 * Theme.horizontalPageMargin
 
-                        readonly property int margins: Math.round((Math.min(Screen.width, Screen.height) - Math.max(width, height))/2)
+                        readonly property int margins: Math.round((Math.min(page.width, page.height) - Math.max(width, height))/2)
 
                         Image {
                             id: qrcodeImage
