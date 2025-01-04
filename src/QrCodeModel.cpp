@@ -1,34 +1,40 @@
 /*
+ * Copyright (C) 2021-2025 Slava Monich <slava@monich.com>
  * Copyright (C) 2021 Jolla Ltd.
- * Copyright (C) 2021 Slava Monich <slava@monich.com>
  *
- * You may use this file under the terms of BSD license as follows:
+ * You may use this file under the terms of the BSD license as follows:
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
- *   1. Redistributions of source code must retain the above copyright
- *      notice, this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer
- *      in the documentation and/or other materials provided with the
- *      distribution.
- *   3. Neither the names of the copyright holders nor the names of its
- *      contributors may be used to endorse or promote products derived
- *      from this software without specific prior written permission.
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer
+ *     in the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *  3. Neither the names of the copyright holders nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation
+ * are those of the authors and should not be interpreted as representing
+ * any official policies, either expressed or implied.
  */
 
 #include "QrCodeModel.h"
@@ -42,12 +48,13 @@
 // QrCodeModel::Task
 // ==========================================================================
 
-class QrCodeModel::Task : public HarbourTask
+class QrCodeModel::Task :
+    public HarbourTask
 {
     Q_OBJECT
 
 public:
-    Task(QThreadPool* aPool, QString aText);
+    Task(QThreadPool*, const QString&);
     void performTask() Q_DECL_OVERRIDE;
 
 public:
@@ -55,13 +62,16 @@ public:
     QString iCode[HarbourQrCodeGenerator::ECLevelCount];
 };
 
-QrCodeModel::Task::Task(QThreadPool* aPool, QString aText) :
+QrCodeModel::Task::Task(
+    QThreadPool* aPool,
+    const QString& aText) :
     HarbourTask(aPool),
     iText(aText)
 {
 }
 
-void QrCodeModel::Task::performTask()
+void
+QrCodeModel::Task::performTask()
 {
     for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount && !isCanceled(); i++) {
         iCode[i] = HarbourBase32::toBase32(HarbourQrCodeGenerator::generate(iText,
@@ -73,7 +83,8 @@ void QrCodeModel::Task::performTask()
 // QrCodeModel::Private
 // ==========================================================================
 
-class QrCodeModel::Private : public QObject
+class QrCodeModel::Private :
+    public QObject
 {
     Q_OBJECT
 
@@ -83,14 +94,14 @@ public:
         EcLevelRole
     };
 
-    Private(QrCodeModel* aParent);
+    Private(QrCodeModel*);
     ~Private();
 
     QrCodeModel* parentModel() const;
     int count() const;
     QString defaultCode() const;
-    const QString* codeAt(int aRow, HarbourQrCodeGenerator::ECLevel* aLevel = Q_NULLPTR) const;
-    void setText(QString aValue);
+    const QString* codeAt(int, HarbourQrCodeGenerator::ECLevel* aLevel = Q_NULLPTR) const;
+    void setText(const QString&);
 
 public Q_SLOTS:
     void onTaskDone();
@@ -102,7 +113,8 @@ public:
     QString iCode[HarbourQrCodeGenerator::ECLevelCount];
 };
 
-QrCodeModel::Private::Private(QrCodeModel* aParent) :
+QrCodeModel::Private::Private(
+    QrCodeModel* aParent) :
     QObject(aParent),
     iThreadPool(new QThreadPool(this)),
     iTask(Q_NULLPTR)
@@ -117,23 +129,29 @@ QrCodeModel::Private::~Private()
     iThreadPool->waitForDone();
 }
 
-inline QrCodeModel* QrCodeModel::Private::parentModel() const
+inline
+QrCodeModel*
+QrCodeModel::Private::parentModel() const
 {
     return qobject_cast<QrCodeModel*>(parent());
 }
 
-int QrCodeModel::Private::count() const
+int
+QrCodeModel::Private::count() const
 {
-    int row = 0;
+    int n = 0;
     for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
         if (!iCode[i].isEmpty()) {
-            row++;
+            n++;
         }
     }
-    return row;
+    return n;
 }
 
-const QString* QrCodeModel::Private::codeAt(int aRow, HarbourQrCodeGenerator::ECLevel* aLevel) const
+const QString*
+QrCodeModel::Private::codeAt(
+    int aRow,
+    HarbourQrCodeGenerator::ECLevel* aLevel) const
 {
     int row = 0;
     for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
@@ -154,13 +172,16 @@ const QString* QrCodeModel::Private::codeAt(int aRow, HarbourQrCodeGenerator::EC
     return Q_NULLPTR;
 }
 
-QString QrCodeModel::Private::defaultCode() const
+QString
+QrCodeModel::Private::defaultCode() const
 {
     const QString* code = codeAt(0);
     return code ? QString(*code) : QString();
 }
 
-void QrCodeModel::Private::setText(QString aText)
+void
+QrCodeModel::Private::setText(
+    const QString& aText)
 {
     if (iText != aText) {
         iText = aText;
@@ -195,7 +216,8 @@ void QrCodeModel::Private::setText(QString aText)
     }
 }
 
-void QrCodeModel::Private::onTaskDone()
+void
+QrCodeModel::Private::onTaskDone()
 {
     if (sender() == iTask) {
         Task* task = iTask;
@@ -244,7 +266,8 @@ void QrCodeModel::Private::onTaskDone()
 // QrCodeModel
 // ==========================================================================
 
-QrCodeModel::QrCodeModel(QObject* aParent) :
+QrCodeModel::QrCodeModel(
+    QObject* aParent) :
     QAbstractListModel(aParent),
     iPrivate(new Private(this))
 {
@@ -256,32 +279,41 @@ QrCodeModel::~QrCodeModel()
 }
 
 // Callback for qmlRegisterSingletonType<QrCodeModel>
-QObject* QrCodeModel::createSingleton(QQmlEngine* aEngine, QJSEngine*)
+QObject*
+QrCodeModel::createSingleton(
+    QQmlEngine*,
+    QJSEngine*)
 {
     return new QrCodeModel(); // Singleton doesn't need a parent
 }
 
-QString QrCodeModel::getText() const
+QString
+QrCodeModel::getText() const
 {
     return iPrivate->iText;
 }
 
-void QrCodeModel::setText(QString aValue)
+void
+QrCodeModel::setText(
+    QString aValue)
 {
     iPrivate->setText(aValue);
 }
 
-QString QrCodeModel::getQrCode() const
+QString
+QrCodeModel::getQrCode() const
 {
     return iPrivate->defaultCode();
 }
 
-bool QrCodeModel::isRunning() const
+bool
+QrCodeModel::isRunning() const
 {
     return iPrivate->iTask != Q_NULLPTR;
 }
 
-QHash<int,QByteArray> QrCodeModel::roleNames() const
+QHash<int,QByteArray>
+QrCodeModel::roleNames() const
 {
     QHash<int,QByteArray> roles;
     roles.insert(Private::QrCodeRole, "qrcode");
@@ -289,12 +321,17 @@ QHash<int,QByteArray> QrCodeModel::roleNames() const
     return roles;
 }
 
-int QrCodeModel::rowCount(const QModelIndex& aParent) const
+int
+QrCodeModel::rowCount(
+    const QModelIndex&) const
 {
     return iPrivate->count();
 }
 
-QVariant QrCodeModel::data(const QModelIndex& aIndex, int aRole) const
+QVariant
+QrCodeModel::data(
+    const QModelIndex& aIndex,
+    int aRole) const
 {
     const int row = aIndex.row();
     HarbourQrCodeGenerator::ECLevel ecLevel;

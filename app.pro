@@ -1,11 +1,5 @@
+PREFIX = harbour
 NAME = qrclip
-
-openrepos {
-    PREFIX = openrepos
-    DEFINES += OPENREPOS
-} else {
-    PREFIX = harbour
-}
 
 TARGET = $${PREFIX}-$${NAME}
 CONFIG += sailfishapp link_pkgconfig
@@ -14,13 +8,6 @@ QT += qml quick concurrent
 
 QMAKE_CXXFLAGS += -Wno-unused-parameter -Wno-psabi
 QMAKE_CFLAGS += -Wno-unused-parameter
-
-app_settings {
-    # This path is hardcoded in jolla-settings
-    TRANSLATIONS_PATH = /usr/share/translations
-} else {
-    TRANSLATIONS_PATH = /usr/share/$${TARGET}/translations
-}
 
 CONFIG(debug, debug|release) {
     DEFINES += DEBUG HARBOUR_DEBUG
@@ -93,30 +80,21 @@ for(s, ICON_SIZES) {
     icon_dir = icons/$${s}x$${s}
     $${icon_target}.files = $${icon_dir}/$${TARGET}.png
     $${icon_target}.path = /usr/share/icons/hicolor/$${s}x$${s}/apps
-    equals(PREFIX, "openrepos") {
-        $${icon_target}.extra = cp $${icon_dir}/harbour-$${NAME}.png $$eval($${icon_target}.files)
-        $${icon_target}.CONFIG += no_check_exist
-    }
     INSTALLS += $${icon_target}
 }
 
-# Desktop file
-equals(PREFIX, "openrepos") {
-    desktop.extra = sed s/harbour/openrepos/g harbour-$${NAME}.desktop > $${TARGET}.desktop
-    desktop.CONFIG += no_check_exist
-}
-
-TRANSLATION_IDBASED=-idbased
+# Translations
+TRANSLATIONS_PATH = /usr/share/$${TARGET}/translations
 TRANSLATION_SOURCES = \
   $${_PRO_FILE_PWD_}/qml
 
 defineTest(addTrFile) {
-    rel = translations/$${1}
+    rel = translations/harbour-$${1}
     OTHER_FILES += $${rel}.ts
     export(OTHER_FILES)
 
     in = $${_PRO_FILE_PWD_}/$$rel
-    out = $${OUT_PWD}/$$rel
+    out = $${OUT_PWD}/translations/$${PREFIX}-$$1
 
     s = $$replace(1,-,_)
     lupdate_target = lupdate_$$s
@@ -128,7 +106,7 @@ defineTest(addTrFile) {
 
     $${qm_target}.path = $$TRANSLATIONS_PATH
     $${qm_target}.depends = $${lupdate_target}
-    $${qm_target}.commands = lrelease $$TRANSLATION_IDBASED \"$${out}.ts\" && \
+    $${qm_target}.commands = lrelease -idbased \"$${out}.ts\" && \
         $(INSTALL_FILE) \"$${out}.qm\" $(INSTALL_ROOT)$${TRANSLATIONS_PATH}/
 
     QMAKE_EXTRA_TARGETS += $${lupdate_target} $${qm_target}
@@ -144,11 +122,7 @@ defineTest(addTrFile) {
 
 LANGUAGES = fr pl pt ru sv zh_CN
 
-addTrFile($${TARGET})
+addTrFile($${NAME})
 for(l, LANGUAGES) {
-    addTrFile($${TARGET}-$$l)
+    addTrFile($${NAME}-$$l)
 }
-
-qm.path = $$TRANSLATIONS_PATH
-qm.CONFIG += no_check_exist
-INSTALLS += qm
