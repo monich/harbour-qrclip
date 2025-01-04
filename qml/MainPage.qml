@@ -102,6 +102,7 @@ Page {
                         anchors.centerIn: parent
                         width: qrcodeImage.width + 2 * Theme.horizontalPageMargin
                         height: qrcodeImage.height + 2 * Theme.horizontalPageMargin
+                        opacity: (qrcodeImage.width && qrcodeImage.height) ? 1 : 0
 
                         readonly property int margins: Math.round((Math.min(qrCodes.width, qrCodes.height) - Math.max(width, height))/2)
 
