@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.nemomobile.configuration 1.0
 import harbour.qrclip 1.0
 
 import "harbour"
@@ -9,7 +10,7 @@ Page {
 
     property alias model: qrCodes.model
 
-    property bool _showText
+    property alias _showText: showText.value
     property real _spaceForText: _showText ? _maxSpaceForText : _minSpaceForText
     readonly property int _maxSpaceForText: Math.max(qrCodes.width, qrCodes.height) - Math.min(qrCodes.width, qrCodes.height)
     readonly property int _minSpaceForText: Math.round(_maxSpaceForText/2)
@@ -181,13 +182,6 @@ Page {
 
     Behavior on _spaceForText { SmoothedAnimation { duration: 200 } }
 
-    Timer {
-        id: startTimer
-
-        running: true
-        interval: 200
-    }
-
     states: [
         State {
             name: "portrait"
@@ -216,4 +210,18 @@ Page {
             ]
         }
     ]
+
+    Timer {
+        id: startTimer
+
+        running: true
+        interval: 200
+    }
+
+    ConfigurationValue {
+        id: showText
+
+        key: "/apps/harbour-qrclip/showText"
+        defaultValue: false
+    }
 }
