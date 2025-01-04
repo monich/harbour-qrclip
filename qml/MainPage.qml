@@ -11,10 +11,11 @@ Page {
 
     property bool _showText
     property real _spaceForText: _showText ? _maxSpaceForText : _minSpaceForText
-    readonly property int _maxSpaceForText: Math.max(page.width, page.height) - Math.min(page.width, page.height)
+    readonly property int _maxSpaceForText: Math.max(qrCodes.width, qrCodes.height) - Math.min(qrCodes.width, qrCodes.height)
     readonly property int _minSpaceForText: Math.round(_maxSpaceForText/2)
-    readonly property int _maxDisplaySize: Math.min(page.width, page.height) - 4 * Theme.horizontalPageMargin
+    readonly property int _maxDisplaySize: Math.min(qrCodes.width, qrCodes.height) - 4 * Theme.horizontalPageMargin
     readonly property bool _haveQrCode: qrCodes.count > 0
+    readonly property int _topNotch: ('topCutout' in Screen) ? Screen.topCutout.height : 0
     property alias _currentItem: qrCodes.currentItem
 
     SilicaFlickable {
@@ -56,15 +57,18 @@ Page {
         SilicaListView {
             id: qrCodes
 
-            anchors.fill: parent
+            anchors {
+                fill: parent
+                topMargin: _topNotch
+            }
             orientation: ListView.Horizontal
             snapMode: ListView.SnapOneItem
             highlightRangeMode: ListView.StrictlyEnforceRange
 
             delegate: MouseArea {
 
-                width: page.width
-                height: page.height
+                width: qrCodes.width
+                height: qrCodes.height
 
                 property string lastSavedQrCode
                 readonly property string qrCode: model.qrcode
@@ -86,8 +90,8 @@ Page {
                     width: itemSize
                     height: itemSize
 
-                    readonly property int itemSize: Math.min(page.width, page.height)
-                    readonly property int itemOffset: Math.round((Math.max(page.width, page.height) - itemSize)/2 - (_spaceForText - _minSpaceForText))
+                    readonly property int itemSize: Math.min(qrCodes.width, qrCodes.height)
+                    readonly property int itemOffset: Math.round((Math.max(qrCodes.width, qrCodes.height) - itemSize)/2 - (_spaceForText - _minSpaceForText))
 
                     Rectangle {
                         id: qrcodeRect
@@ -98,7 +102,7 @@ Page {
                         width: qrcodeImage.width + 2 * Theme.horizontalPageMargin
                         height: qrcodeImage.height + 2 * Theme.horizontalPageMargin
 
-                        readonly property int margins: Math.round((Math.min(page.width, page.height) - Math.max(width, height))/2)
+                        readonly property int margins: Math.round((Math.min(qrCodes.width, qrCodes.height) - Math.max(width, height))/2)
 
                         Image {
                             id: qrcodeImage
@@ -191,9 +195,9 @@ Page {
             changes: [
                 PropertyChanges {
                     target: textItem
-                    x: 0
-                    y: page.height - _spaceForText
-                    width: page.width
+                    x: qrCodes.x
+                    y: qrCodes.y + qrCodes.height - _spaceForText
+                    width: qrCodes.width
                     height: _maxSpaceForText
                 }
             ]
@@ -204,10 +208,10 @@ Page {
             changes: [
                 PropertyChanges {
                     target: textItem
-                    x: page.width - _spaceForText
-                    y: 2 * Theme.horizontalPageMargin // Yes, horizontal
+                    x: qrCodes.x + qrCodes.width - _spaceForText
+                    y: qrCodes.y + 2 * Theme.horizontalPageMargin // Yes, horizontal
                     width: _maxSpaceForText
-                    height: page.height - 2 * y
+                    height: qrCodes.height - 2 * y
                 }
             ]
         }
