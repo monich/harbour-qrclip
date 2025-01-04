@@ -6,12 +6,21 @@ ApplicationWindow {
     id: appWindow
 
     allowedOrientations: Orientation.All
-    initialPage: Component { MainPage { allowedOrientations: appWindow.allowedOrientations } }
-    cover: Component {  CoverPage { } }
+    initialPage: Component {
+        MainPage {
+            allowedOrientations: appWindow.allowedOrientations
+            model: qrcodes
+        }
+    }
+    cover: Component {
+        CoverPage {
+            model: qrcodes
+        }
+    }
 
-    Binding {
-        target: QrCodeModel
-        property: "text"
-        value: HarbourClipboard.text
+    QrCodeModel {
+        id: qrcodes
+
+        text: HarbourClipboard.text
     }
 }

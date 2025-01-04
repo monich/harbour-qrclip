@@ -42,9 +42,6 @@
 
 #include <QtCore/QAbstractListModel>
 
-class QQmlEngine;
-class QJSEngine;
-
 class QrCodeModel :
     public QAbstractListModel
 {
@@ -66,9 +63,6 @@ public:
     QHash<int,QByteArray> roleNames() const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex&) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex&, int) const Q_DECL_OVERRIDE;
-
-    // Callback for qmlRegisterSingletonType<QrCodeModel>
-    static QObject* createSingleton(QQmlEngine*, QJSEngine*);
 
 Q_SIGNALS:
     void textChanged();

@@ -282,15 +282,6 @@ QrCodeModel::~QrCodeModel()
     delete iPrivate;
 }
 
-// Callback for qmlRegisterSingletonType<QrCodeModel>
-QObject*
-QrCodeModel::createSingleton(
-    QQmlEngine*,
-    QJSEngine*)
-{
-    return new QrCodeModel(); // Singleton doesn't need a parent
-}
-
 QString
 QrCodeModel::getText() const
 {

@@ -7,13 +7,15 @@ import "harbour"
 Page {
     id: page
 
-    property bool showText
-    property real spaceForText: showText ? maxSpaceForText : minSpaceForText
-    readonly property int maxSpaceForText: Math.max(page.width, page.height) - Math.min(page.width, page.height)
-    readonly property int minSpaceForText: Math.round(maxSpaceForText/2)
-    readonly property int maxDisplaySize: Math.min(page.width, page.height) - 4 * Theme.horizontalPageMargin
-    readonly property bool haveQrCode: qrCodes.count > 0
-    property alias currentItem: qrCodes.currentItem
+    property alias model: qrCodes.model
+
+    property bool _showText
+    property real _spaceForText: _showText ? _maxSpaceForText : _minSpaceForText
+    readonly property int _maxSpaceForText: Math.max(page.width, page.height) - Math.min(page.width, page.height)
+    readonly property int _minSpaceForText: Math.round(_maxSpaceForText/2)
+    readonly property int _maxDisplaySize: Math.min(page.width, page.height) - 4 * Theme.horizontalPageMargin
+    readonly property bool _haveQrCode: qrCodes.count > 0
+    property alias _currentItem: qrCodes.currentItem
 
     SilicaFlickable {
         anchors.fill: parent
@@ -21,14 +23,14 @@ Page {
         PullDownMenu {
             id: menu
 
-            visible: haveQrCode && showText
+            visible: _haveQrCode && _showText
 
             property string savedQrCode
 
             onActiveChanged: {
-                if (!active && savedQrCode && currentItem) {
+                if (!active && savedQrCode && _currentItem) {
                     // Don't save the same code twice
-                    currentItem.lastSavedQrCode = savedQrCode
+                    _currentItem.lastSavedQrCode = savedQrCode
                     savedQrCode = ""
                 }
             }
@@ -37,17 +39,17 @@ Page {
                 //: Pulley menu item
                 //% "Save to Gallery"
                 text: qsTrId("qrclip-menu-save_to_gallery")
-                visible: currentItem && currentItem.needToSaveImage
+                visible: _currentItem && _currentItem.needToSaveImage
                 onClicked: {
-                    if (currentItem && FileUtils.saveToGallery(currentItem.qrCode, "QRClip", "qrcode", Math.min(currentItem.qrCodeScale, 5))) {
-                        menu.savedQrCode = currentItem.qrCode
+                    if (_currentItem && FileUtils.saveToGallery(_currentItem.qrCode, "QRClip", "qrcode", Math.min(_currentItem.qrCodeScale, 5))) {
+                        menu.savedQrCode = _currentItem.qrCode
                     }
                 }
             }
             MenuLabel {
                 //: Pulley menu label
                 //% "Level %1"
-                text: currentItem ? qsTrId("qrclip-menu-level").arg(currentItem.ecLevel) : ""
+                text: _currentItem ? qsTrId("qrclip-menu-level").arg(_currentItem.ecLevel) : ""
             }
         }
 
@@ -58,7 +60,6 @@ Page {
             orientation: ListView.Horizontal
             snapMode: ListView.SnapOneItem
             highlightRangeMode: ListView.StrictlyEnforceRange
-            model: QrCodeModel
 
             delegate: MouseArea {
 
@@ -86,7 +87,7 @@ Page {
                     height: itemSize
 
                     readonly property int itemSize: Math.min(page.width, page.height)
-                    readonly property int itemOffset: Math.round((Math.max(page.width, page.height) - itemSize)/2 - (spaceForText - minSpaceForText))
+                    readonly property int itemOffset: Math.round((Math.max(page.width, page.height) - itemSize)/2 - (_spaceForText - _minSpaceForText))
 
                     Rectangle {
                         id: qrcodeRect
@@ -110,12 +111,12 @@ Page {
                             smooth: false
 
                             readonly property int maxSourceSize: Math.max(sourceSize.width, sourceSize.height)
-                            readonly property int n: maxSourceSize ? Math.floor(maxDisplaySize/maxSourceSize) : 0
+                            readonly property int n: maxSourceSize ? Math.floor(_maxDisplaySize/maxSourceSize) : 0
                         }
                     }
                 }
 
-                onClicked: showText = !showText
+                onClicked: _showText = !_showText
             }
         }
 
@@ -124,7 +125,7 @@ Page {
 
             z: (qrCodes.moving || textFlickable.contentHeight <= textFlickable.height) ? qrCodes.z - 1 : qrCodes.z
             visible: opacity > 0
-            opacity: (spaceForText - minSpaceForText)/(maxSpaceForText - minSpaceForText)
+            opacity: (_spaceForText - _minSpaceForText)/(_maxSpaceForText - _minSpaceForText)
 
             SilicaFlickable {
                 id: textFlickable
@@ -141,7 +142,7 @@ Page {
                     width: parent.width - (isPortrait ? 4 : 1) * Theme.horizontalPageMargin
                     horizontalAlignment: Text.AlignLeft
                     wrapMode: Text.Wrap
-                    text: haveQrCode ? QrCodeModel.text : ""
+                    text: _haveQrCode ? model.text : ""
                     color: Theme.highlightColor
                 }
 
@@ -150,12 +151,12 @@ Page {
         }
 
         Loader {
-            active: !startTimer.running && !qrCodes.count && !QrCodeModel.running
+            active: !startTimer.running && !qrCodes.count && !model.running
             anchors.fill: parent
             sourceComponent: Item {
                 InfoLabel {
                     y: Math.round(parent.height/3 - height/2)
-                    text: QrCodeModel.running ? "" : QrCodeModel.text ?
+                    text: model.running ? "" : model.text ?
                         //: Placeholder text
                         //% "Text in clipboard is too long for QR code."
                         qsTrId("qrclip-placeholder-text_too_long") :
@@ -167,14 +168,14 @@ Page {
                     y: Math.round(2*parent.height/3 - height/2)
                     anchors.horizontalCenter: parent.horizontalCenter
                     sourceSize.height: Theme.iconSizeLarge
-                    source: QrCodeModel.running ? "" : QrCodeModel.text ? "images/too-long.svg" : "images/shrug.svg"
+                    source: model.running ? "" : model.text ? "images/too-long.svg" : "images/shrug.svg"
                     highlightColor: Theme.secondaryHighlightColor
                 }
             }
         }
     }
 
-    Behavior on spaceForText { SmoothedAnimation { duration: 200 } }
+    Behavior on _spaceForText { SmoothedAnimation { duration: 200 } }
 
     Timer {
         id: startTimer
@@ -191,9 +192,9 @@ Page {
                 PropertyChanges {
                     target: textItem
                     x: 0
-                    y: page.height - spaceForText
+                    y: page.height - _spaceForText
                     width: page.width
-                    height: maxSpaceForText
+                    height: _maxSpaceForText
                 }
             ]
         },
@@ -203,9 +204,9 @@ Page {
             changes: [
                 PropertyChanges {
                     target: textItem
-                    x: page.width - spaceForText
+                    x: page.width - _spaceForText
                     y: 2 * Theme.horizontalPageMargin // Yes, horizontal
-                    width: maxSpaceForText
+                    width: _maxSpaceForText
                     height: page.height - 2 * y
                 }
             ]

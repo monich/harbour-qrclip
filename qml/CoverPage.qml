@@ -7,13 +7,15 @@ import "harbour"
 CoverBackground {
     id: cover
 
-    readonly property int availableHeight: height - coverActionHeight
-    readonly property int coverActionHeight: Theme.itemSizeSmall/parent.scale
+    property var model
+
+    readonly property int _availableHeight: height - _coverActionHeight
+    readonly property int _coverActionHeight: Theme.itemSizeSmall/parent.scale
 
     HarbourHighlightIcon {
         id: background
 
-        y: 2 * Math.round((availableHeight - height)/4)
+        y: 2 * Math.round((_availableHeight - height)/4)
         width: 2 * Math.round((limitWidth ? maxWidth : (maxHeight * ratioX / ratioY))/2)
         height: 2 * Math.round((limitWidth ? (maxWidth * ratioY / ratioX) : maxHeight)/2)
         sourceSize: Qt.size(width, height)
@@ -26,7 +28,7 @@ CoverBackground {
         readonly property real ratioX: 4
         readonly property real ratioY: 5
         readonly property bool limitWidth: (ratioX * parent.height) > (ratioY * parent.width)
-        readonly property real maxHeight: availableHeight - 2 * Theme.paddingLarge
+        readonly property real maxHeight: _availableHeight - 2 * Theme.paddingLarge
         readonly property real maxWidth: parent.width - 2 * Theme.paddingLarge
     }
 
@@ -42,9 +44,9 @@ CoverBackground {
             anchors.fill: parent
             smooth: false
             asynchronous: true
-            source: QrCodeModel.qrcode ? "image://qrcode/" + QrCodeModel.qrcode + "?color=" + Theme.primaryColor : ""
+            source: model.qrcode ? "image://qrcode/" + model.qrcode + "?color=" + Theme.primaryColor : ""
             visible: opacity > 0
-            opacity: QrCodeModel.qrcode ? 1 : 0
+            opacity: model.qrcode ? 1 : 0
             Behavior on opacity { FadeAnimation { } }
         }
 
@@ -54,9 +56,9 @@ CoverBackground {
             asynchronous: true
             visible: opacity > 0
             highlightColor: Theme.secondaryHighlightColor
-            source: (!QrCodeModel.text || QrCodeModel.qrcode || QrCodeModel.running) ?
+            source: (!model.text || model.qrcode || model.running) ?
                 "images/happy.svg" : "images/unhappy.svg"
-            opacity: (QrCodeModel.qrcode || QrCodeModel.running) ? 0 : 1
+            opacity: (model.qrcode || model.running) ? 0 : 1
             Behavior on opacity { FadeAnimation { } }
         }
     }

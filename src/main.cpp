@@ -63,13 +63,15 @@
     qmlRegisterType<class>(uri, v1, v2, #class)
 #define REGISTER_SINGLETON(class,uri,v1,v2) \
     qmlRegisterSingletonType<class>(uri, v1, v2, #class, class::createSingleton)
+#define REGISTER_UNCREATABLE(class,uri,v1,v2) \
+    qmlRegisterUncreatableType<class>(uri, v1, v2, #class, #class)
 
 static void register_types(const char* uri, int v1 = 1, int v2 = 0)
 {
     REGISTER_SINGLETON(FileUtils, uri, v1, v2);
-    REGISTER_SINGLETON(QrCodeModel, uri, v1, v2);
     REGISTER_SINGLETON(HarbourClipboard, uri, v1, v2);
-    REGISTER_TYPE(HarbourQrCodeGenerator, uri, v1, v2);
+    REGISTER_UNCREATABLE(HarbourQrCodeGenerator, uri, v1, v2);
+    REGISTER_TYPE(QrCodeModel, uri, v1, v2);
 }
 
 int main(int argc, char *argv[])
