@@ -184,23 +184,27 @@ QrCodeModel::Private::setText(
     const QString& aText)
 {
     if (iText != aText) {
-        iText = aText;
         QrCodeModel* model = parentModel();
+        const bool prevCount = count();
+
+        HDEBUG(aText);
+        iText = aText;
         if (iText.isEmpty()) {
             // No text - no code. Just clear the model
-            const QString prevCode(defaultCode());
-            for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
-                iCode[i].clear();
+            if (prevCount > 0) {
+                model->beginResetModel();
+                for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
+                    iCode[i].clear();
+                }
+                model->endResetModel();
+                // It's empty now
+                Q_EMIT model->qrcodeChanged();
             }
             if (iTask) {
                 // Cancel the task
                 iTask->release();
                 iTask = Q_NULLPTR;
                 Q_EMIT model->runningChanged();
-            }
-            if (!prevCode.isEmpty()) {
-                // It's empty now
-                Q_EMIT model->qrcodeChanged();
             }
         } else {
             // We actually need to generate a new code
