@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 Slava Monich <slava@monich.com>
+ * Copyright (C) 2021-2026 Slava Monich <slava@monich.com>
  * Copyright (C) 2021 Jolla Ltd.
  *
  * You may use this file under the terms of the BSD license as follows:
@@ -67,8 +67,7 @@ QrCodeModel::Task::Task(
     const QString& aText) :
     HarbourTask(aPool),
     iText(aText)
-{
-}
+{}
 
 void
 QrCodeModel::Task::performTask()
@@ -108,7 +107,7 @@ public Q_SLOTS:
 
 public:
     QThreadPool* iThreadPool;
-    Task* iTask;
+    HarbourTask::AutoReleasePointer<Task> iTask;
     QString iText;
     QString iCode[HarbourQrCodeGenerator::ECLevelCount];
 };
@@ -116,8 +115,7 @@ public:
 QrCodeModel::Private::Private(
     QrCodeModel* aParent) :
     QObject(aParent),
-    iThreadPool(new QThreadPool(this)),
-    iTask(Q_NULLPTR)
+    iThreadPool(new QThreadPool(this))
 {
     // Serialize the tasks for this model:
     iThreadPool->setMaxThreadCount(1);
@@ -125,7 +123,7 @@ QrCodeModel::Private::Private(
 
 QrCodeModel::Private::~Private()
 {
-    if (iTask) iTask->release();
+    iTask.reset();
     iThreadPool->waitForDone();
 }
 
@@ -140,6 +138,7 @@ int
 QrCodeModel::Private::count() const
 {
     int n = 0;
+
     for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
         if (!iCode[i].isEmpty()) {
             n++;
@@ -154,8 +153,10 @@ QrCodeModel::Private::codeAt(
     HarbourQrCodeGenerator::ECLevel* aLevel) const
 {
     int row = 0;
+
     for (int i = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
         const QString* code = iCode + i;
+
         if (!code->isEmpty()) {
             if (row == aRow) {
                 if (aLevel) {
@@ -176,6 +177,7 @@ QString
 QrCodeModel::Private::defaultCode() const
 {
     const QString* code = codeAt(0);
+
     return code ? QString(*code) : QString();
 }
 
@@ -202,15 +204,14 @@ QrCodeModel::Private::setText(
             }
             if (iTask) {
                 // Cancel the task
-                iTask->release();
-                iTask = Q_NULLPTR;
+                iTask.reset();
                 Q_EMIT model->runningChanged();
             }
         } else {
+            const bool wasRunning = !iTask.isNull();
+
             // We actually need to generate a new code
-            const bool wasRunning = (iTask != Q_NULLPTR);
-            if (iTask) iTask->release();
-            iTask = new Task(iThreadPool, iText);
+            iTask.reset(new Task(iThreadPool, iText));
             iTask->submit(this, SLOT(onTaskDone()));
             if (!wasRunning) {
                 Q_EMIT model->runningChanged();
@@ -223,16 +224,19 @@ QrCodeModel::Private::setText(
 void
 QrCodeModel::Private::onTaskDone()
 {
-    if (sender() == iTask) {
-        Task* task = iTask;
-        iTask = Q_NULLPTR;
+    if (iTask) {
+        HarbourTask::AutoReleasePointer<Task> task;
+
+        task.swap(iTask);
 
         QModelIndex parent;
         QrCodeModel* model = parentModel();
         const QString prevCode(defaultCode());
+
         for (int i = 0, pos = 0; i < HarbourQrCodeGenerator::ECLevelCount; i++) {
             QString* modelValue = iCode + i;
             const QString* newValue = task->iCode + i;
+
             if (modelValue->compare(*newValue) != 0) {
                 if (modelValue->isEmpty()) {
                     // Inserting a new value
@@ -247,18 +251,18 @@ QrCodeModel::Private::onTaskDone()
                     model->endRemoveRows();
                     // Current position remains the same
                 } else {
-                    // The value has changed
-                    *modelValue = *newValue;
                     QVector<int> roles;
                     roles.append(QrCodeRole);
                     const QModelIndex index(model->index(pos));
+
+                    // The value has changed
+                    *modelValue = *newValue;
                     model->dataChanged(index, index, roles);
                     pos++;
                 }
             }
         }
 
-        task->release();
         if (defaultCode() != prevCode) {
             Q_EMIT model->qrcodeChanged();
         }
@@ -274,8 +278,7 @@ QrCodeModel::QrCodeModel(
     QObject* aParent) :
     QAbstractListModel(aParent),
     iPrivate(new Private(this))
-{
-}
+{}
 
 QrCodeModel::~QrCodeModel()
 {
@@ -331,6 +334,7 @@ QrCodeModel::data(
     const int row = aIndex.row();
     HarbourQrCodeGenerator::ECLevel ecLevel;
     const QString* qrCode = iPrivate->codeAt(row, &ecLevel);
+
     if (qrCode) {
         switch ((Private::Role)aRole) {
         case Private::QrCodeRole: return *qrCode;
