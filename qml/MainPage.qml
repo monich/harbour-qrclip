@@ -60,7 +60,7 @@ Page {
 
             anchors {
                 fill: parent
-                topMargin: _topNotch
+                topMargin: isPortrait ? _topNotch : 0
             }
             orientation: ListView.Horizontal
             snapMode: ListView.SnapOneItem
