@@ -1,6 +1,6 @@
 Name:           harbour-qrclip
 Summary:        QR code generator
-Version:        1.0.13
+Version:        1.0.14
 Release:        1
 License:        BSD
 Group:          Applications/Productivity
@@ -18,6 +18,7 @@ BuildRequires:  qt5-qttools-linguist
 
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
+%define _binary_payload w6.xzdio
 
 %description
 Generates QR codes from clipboard contents.
@@ -43,7 +44,6 @@ Url:
 %qtc_make %{?_smp_mflags}
 
 %install
-rm -rf %{buildroot}
 %qmake5_install
 
 desktop-file-install --delete-original \
